@@ -3,7 +3,7 @@ import pandas as pd
 import math
 from pathlib import Path
 
-from sklearn.model_selection import GridSearchCV
+#from sklearn.model_selection import GridSearchCV
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
