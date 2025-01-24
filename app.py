@@ -3,8 +3,6 @@ import pandas as pd
 import math
 from pathlib import Path
 
-import sklearn
-
 from sklearn.model_selection import GridSearchCV
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
