@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import math
 from pathlib import Path
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
@@ -32,13 +33,13 @@ def get_protein_data():
     protein_df = pd.read_csv(DATA_FILENAME)
 
 
-    
+    protein_df = protein_df.drop(columns= 'Unnamed: 0')
 
     return protein_df
 
 usable_df = get_protein_data()
 
-st.write(usable_df.head())
+
 # -----------------------------------------------------------------------------
 # Draw the actual page
 
@@ -50,16 +51,22 @@ This is my protein interaction predictor.  Just input protein 1's sequence and p
 
 '''
 
+''' 
+Below is an example of the dataset being used to run this random forest model
+
+'''
+
+st.write(usable_df.head())
 # Add some spacing
 ''
 ''
 
 
 user_text1 = st.text_area('input protein sequence 1')
-st.write(user_text1)
+#st.write(user_text1)
 
 user_text2 = st.text_area('input protein sequence 2')
-st.write(user_text2)
+#st.write(user_text2)
 
 seqs = [user_text1, user_text2]
 
@@ -127,20 +134,86 @@ def seq_features(seqs):
                     
         if i == 0:
                 
-            p1_list = [seq, seq_len, phobic['phobic_total'], philic['philic_total'], basic['basic_total'], acidic['acidic_total'], aromatic['aromatic_total'], sulfur['sulfur_total']]
+            p1_list = [seq_len, phobic['phobic_total'], philic['philic_total'], basic['basic_total'], acidic['acidic_total'], aromatic['aromatic_total'], sulfur['sulfur_total']]
                 
         elif i != 0:
                 
-            p2_list = [seq, seq_len, phobic['phobic_total'], philic['philic_total'], basic['basic_total'], acidic['acidic_total'], aromatic['aromatic_total'], sulfur['sulfur_total']]
+            p2_list = [seq_len, phobic['phobic_total'], philic['philic_total'], basic['basic_total'], acidic['acidic_total'], aromatic['aromatic_total'], sulfur['sulfur_total']]
                 
     p3_list = p1_list + p2_list
         
         
     return p3_list
 
+merged = None
 
-merged = seq_features(seqs)
+if user_text1 and user_text2:
+
+    merged = seq_features(seqs)
 
 ''
 ''
 st.write(merged)
+
+
+def standard(df, p_list):
+        
+    features = list(df.columns[df.columns != 'protein_interaction'])
+     
+    X = df[features]
+        
+    y = df['protein_interaction']
+
+    p_list = np.array(p_list)
+
+    p_list = p_list.reshape(1, 14)
+        
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = .3, random_state = 7, stratify=y)
+        
+    stan_scal = StandardScaler()
+        
+    X = stan_scal.fit_transform(X)
+
+    p_list = stan_scal.transform(p_list)
+        
+    #X_test = stan_scal.transform(X_test)
+        
+    return X, y, p_list
+
+
+ready_data = None
+
+if merged:
+
+    ready_data = standard(usable_df, merged)
+
+    st.write('data is loading')
+
+
+def rfc(data):
+
+    rfc = RandomForestClassifier(criterion='entropy', n_estimators=500)
+
+    rfc = rfc.fit(data[0], data[1])
+
+    return rfc
+
+
+model = None
+
+if ready_data != None:
+
+    model = rfc(ready_data)
+
+    st.write('model is training')
+
+
+
+
+if model != None:
+
+    res = rfc.predict(merged)
+
+    st.write('model is predicting')
+
+    st.write(res)
