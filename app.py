@@ -101,7 +101,7 @@ def seq_features(seqs):
         sulfur = {'C':0 , 'M':0, 'sulfur_total':0}
             
             
-        seq = seq[i]
+        seq = seqs[i]
         seq_split = [y for y in seq]
         seq_len = len(seq_split)
             
@@ -148,6 +148,9 @@ def seq_features(seqs):
         
     return p3_list
 
+
+merged = seq_features(seqs)
+
 ''
 ''
-st.write(p3_list)
+st.write(merged)
