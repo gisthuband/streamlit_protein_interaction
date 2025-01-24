@@ -64,3 +64,7 @@ This is my protein interaction predictor.  Just input protein 1's sequence and p
 ''
 ''
 usable_df.head()
+
+var1 = st.text_area()
+
+print (var1)
