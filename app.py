@@ -22,8 +22,8 @@ def get_protein_data():
     """
 
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    #DATA_FILENAME = Path(__file__).'github/gisthuband/protein_interaction_predictor/condensed_feature_engineered.csv'
-    protein_df = pd.read_csv('/condensed_feature_engineered.csv')
+    DATA_FILENAME = Path(__file__).parent/'data/condensed_feature_engineered.csv'
+    protein_df = pd.read_csv(DATA_FILENAME)
 
    
 
