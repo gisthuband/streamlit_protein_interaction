@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import math
 from pathlib import Path
+from sklearn.model_selection import GridSearchCV
+from sklearn import preprocessing
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+import numpy as np
+from sklearn.metrics import classification_report, confusion_matrix, roc_curve, auc
 
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
@@ -25,30 +31,14 @@ def get_protein_data():
     DATA_FILENAME = Path(__file__).parent/'data/condensed_feature_engineered.csv'
     protein_df = pd.read_csv(DATA_FILENAME)
 
-   
 
-    # The data above has columns like:
-    ###protein 1 & 2:
-    #sequence
-    #len
-    #phobic count
-    #philic count
-    #acidic count
-    #basic count
-    #aromatic count
-    #sulfur count
-    #and whether or not the proteins interact 
-    #
-    # So let's remove the sequence and extrac only numeric information
-    
-
-    # Convert years from string to integers
     
 
     return protein_df
 
 usable_df = get_protein_data()
 
+st.write(usable_df.head())
 # -----------------------------------------------------------------------------
 # Draw the actual page
 
@@ -63,7 +53,7 @@ This is my protein interaction predictor.  Just input protein 1's sequence and p
 # Add some spacing
 ''
 ''
-usable_df.head()
+
 
 user_text1 = st.text_area('input protein sequence 1')
 st.write(user_text1)
