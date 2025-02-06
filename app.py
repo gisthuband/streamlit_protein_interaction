@@ -21,7 +21,7 @@ st.set_page_config(
 
 @st.cache_data
 def get_protein_data():
-    """Grab GDP data from a CSV file.
+    """Grab protein sequence pairs from csv, with their following pair or no pair classification.
 
     This uses caching to avoid having to read the file every time. If we were
     reading from an HTTP endpoint instead of a file, it's a good idea to set
@@ -45,14 +45,14 @@ usable_df = get_protein_data()
 
 # Set the title that appears at the top of the page.
 '''
-# :earth_americas: Protein Interaction Predictor (PIP)
-
-This is my protein interaction predictor.  Just input protein 1's sequence and protein 2's sequence, and click 'submit'.
+# Protein Interaction Predictor (PIP)
+# :question: :heavy_plus_sign:  :question: 
+This is my protein interaction predictor.  Just input protein 1's sequence and protein 2's sequence in uppercase, and then hit enter.
 
 '''
 
 ''' 
-Below is an example of the dataset being used to run this random forest model
+Below is an example of the features that were calculated from actual protein pairs being used to run this random forest model
 
 '''
 
@@ -151,6 +151,8 @@ if user_text1 and user_text2:
 
     merged = seq_features(seqs)
 
+    st.write('the following are the features generated from the protein pair')
+
 ''
 ''
 st.write(merged)
@@ -166,7 +168,7 @@ def standard(df, p_list):
 
     p_list = np.array(p_list)
 
-    p_list = p_list.reshape(1, 14)
+    p_list = p_list.reshape(-1, 14)
         
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = .3, random_state = 7, stratify=y)
         
@@ -212,8 +214,16 @@ if ready_data != None:
 
 if model != None:
 
-    res = rfc.predict(merged)
+    merged = np.array(merged)
+
+    merged = merged.reshape(1, -1)
+
+    res = model.predict(merged)
+
+    prob = model.predict_proba(merged)
 
     st.write('model is predicting')
 
     st.write(res)
+
+    st.write('percent chance is: ', prob)
